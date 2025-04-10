@@ -8,8 +8,8 @@ A proposta é estudar e implementar um modelo de IA capaz de distinguir exames d
 
 - Treinamento e validação do algoritmo com base em um banco de dados previamente existente.
 - Comparação dos resultados do modelo com as informações contidas nos cabeçalhos DICOM das imagens.
-- Classificação automática em caso de concordância entre modelo e DICOM.
-- Encaminhamento do exame para inspeção visual em caso de divergência.
+- Validação de concordância entre os resultados do modelo e das tags DICOM.
+- Encaminhamento do exame para inspeção visual em caso de divergência na comparação.
 
 ## ⚙️ Tecnologias e Ferramentas
 
