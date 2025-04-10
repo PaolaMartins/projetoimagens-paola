@@ -12,7 +12,7 @@ A proposta é estudar e implementar um modelo de IA capaz de distinguir exames d
 - Encaminhamento do exame para inspeção visual em caso de divergência na comparação.
 
 
-## 🗂️ Sobre a Base de Dados
+## Sobre a Base de Dados
 
 A base utilizada no projeto contém exames de tomografia computadorizada (TC) de **199 pacientes**, com imagens representando cortes axiais dos **pulmões e estruturas torácicas**. Esses exames foram adquiridos em sua maioria no setor de Radiologia do HCFMRP-USP, utilizando **tomógrafos multidetectores de 16 ou 80 canais** (Philips Brillance Big Bore e Toshiba Aquilion Prime).
 
@@ -28,9 +28,6 @@ Para a inspeção da região mediastinal, será utilizada uma **janela mediastin
 - **Softwares auxiliares:** 3DSlicer  
 - **IDE:** Visual Studio Code
 
-## Status do Projeto
-
-🟡 **Em estudo** – Atualmente está sendo feita a análise inicial da base de dados e o levantamento estatístico das informações.
 
 ## Discente
 
