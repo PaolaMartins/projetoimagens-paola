@@ -120,4 +120,4 @@ for patient_id, studies in pacientes_data.items():
         filename = f"{patient_id}_serie_{i+1}_histograma.png"
         plt.savefig(os.path.join(hist_folder, filename))
         plt.close()
-        print(f"  ➤ Histograma salvo: {filename}")
+        print(f"Histograma salvo: {filename}")
