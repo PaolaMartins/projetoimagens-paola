@@ -102,9 +102,6 @@ def extract_studies_metadata(root_folder):
 
 
 def select_series_by_rules(series_list, contraste_flag):
-    """
-    ⚠️ NÃO ALTERADA — mantém exatamente as regras originais de seleção.
-    """
     for s in series_list:
         s["desc_upper"] = s["Series Description"].upper()
 
@@ -145,7 +142,7 @@ def loadSeries(folder_path):
                 ds = pydicom.dcmread(path, stop_before_pixels=False)
                 slices.append(ds)
             except Exception as e:
-                print(f"⚠️ Erro ao ler {f}: {e}", flush=True)
+                print(f" !- Erro ao ler {f}: {e}", flush=True)
                 continue
 
     if len(slices) == 0:
@@ -155,10 +152,10 @@ def loadSeries(folder_path):
     try:
         slices.sort(key=lambda x: float(x.ImagePositionPatient[2]))
     except AttributeError:
-        print(f"⚠️ Série em {folder_path} sem ImagePositionPatient — ignorada.", flush=True)
+        print(f"   !-Série em {folder_path} sem ImagePositionPatient — ignorada.", flush=True)
         return None
     except Exception as e:
-        print(f"⚠️ Erro inesperado ao ordenar {folder_path}: {e}", flush=True)
+        print(f"   !-Erro inesperado ao ordenar {folder_path}: {e}", flush=True)
         return None
 
     ds = slices[0]
@@ -227,10 +224,10 @@ for patient_id, studies in pacientes_data.items():
 
         contraste_flag = int(row["Contraste"].iloc[0])
 
-        # 🔹 Aplica o score antes da seleção
+        #  Aplica o score antes da seleção
         study["Series"] = score_series(study["Series"], contraste_flag)
 
-        # 🔹 Mantém seleção original
+        # Mantém seleção original
         selected_series = select_series_by_rules(study["Series"], contraste_flag)
 
         if selected_series is None:
@@ -270,4 +267,5 @@ for patient_id, studies in pacientes_data.items():
 df_features = pd.DataFrame(features_list)
 output_csv = os.path.join(features_path, "features_histogramas.csv")
 df_features.to_csv(output_csv, index=False)
-print("\n✅ Extração concluída! Planilha salva como 'features_histogramas.csv'.")
+print("\n - Extração concluída! Planilha salva como 'features_histogramas.csv'.")
+
