@@ -1,0 +1,63 @@
+import os
+import numpy as np
+import pydicom
+import matplotlib.pyplot as plt
+
+# Parâmetros da janela (pulmonar)
+window_center = 40
+window_width = 400
+
+def apply_window(image, center, width):
+    min_val = center - width / 2
+    max_val = center + width / 2
+    windowed = np.clip(image, min_val, max_val)
+    windowed = ((windowed - min_val) / (max_val - min_val)) * 255.0
+    return windowed.astype(np.uint8)
+
+def load_dicom_series(folder_path):
+    files = [f for f in os.listdir(folder_path) if f.endswith(".dcm")]
+    files.sort()
+    slices = [pydicom.dcmread(os.path.join(folder_path, f)) for f in files]
+    slices.sort(key=lambda x: float(x.InstanceNumber))
+    images = [s.pixel_array * s.RescaleSlope + s.RescaleIntercept for s in slices]
+    return np.stack(images), slices[0]
+
+def show_histogram(image, title="Histograma"):
+    plt.figure()
+    plt.hist(image.ravel(), bins=256, color='blue', alpha=0.7)
+    plt.title(title)
+    plt.xlabel('Intensidade de Pixel')
+    plt.ylabel('Frequência')
+    plt.grid(True)
+    plt.show()
+
+# Caminho da pasta DICOM
+folder = "C:/Users/Home/Documents/USP2024/IC/0002265C/1.2.277.1.2.18545002.13862.20160808143815056.1/1.3.12.2.1107.5.1.4.63802.30000016080510593968200047626"
+volume, sample_dicom = load_dicom_series(folder)
+
+# Selecionar fatia central
+slice_index = volume.shape[0] // 2
+image_slice = volume[slice_index]
+
+# Aplica janela
+windowed_image = apply_window(image_slice, window_center, window_width)
+
+# Valor do pixel central
+center_y, center_x = windowed_image.shape[0] // 2, windowed_image.shape[1] // 2
+center_pixel_value = windowed_image[center_y, center_x]
+print(f"Valor do pixel central: {center_pixel_value}")
+
+# Histograma da imagem original em HU
+show_histogram(image_slice, title="Histograma da Imagem Original (HU)")
+
+# Aplicar janela
+windowed_image = apply_window(image_slice, window_center, window_width)
+
+# Histograma da imagem com janela
+show_histogram(windowed_image, title="Histograma da Imagem com Janela (0–255)")
+
+# Mostrar imagem com janela
+plt.imshow(windowed_image, cmap='gray')
+plt.title("Fatia Central com Janela")
+plt.axis('off')
+plt.show()
