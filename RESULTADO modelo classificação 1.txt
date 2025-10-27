@@ -1,0 +1,19 @@
+RESULTADO PRIMEIRO MODELO DE CLASSIFICAÇÃO ML (SMV) 
+(o treino foi feito com 80% da base, e o teste com 20%)
+
+Acuracia:  0.9686274509803922
+
+Relatorio Classificação:
+                precision    recall  f1-score   support
+
+           0       0.97      1.00      0.98       241
+           1       1.00      0.43      0.60        14            ----- Obteve somente 43% de acerto nos com contraste(Olhando Recall), provavelmente por conta da base desbalanceada 
+
+    accuracy                           0.97       255
+   macro avg       0.98      0.71      0.79       255
+weighted avg       0.97      0.97      0.96       255
+
+
+Matriz de Confusão:
+  [[241   0]
+ [  8   6]]
