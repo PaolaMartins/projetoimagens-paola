@@ -125,11 +125,11 @@ def loadSeries(folder_path):
     print(f"      - Série carregada com sucesso ({len(slices)} cortes)", flush=True)
     return sitk.GetImageFromArray(volume)
 
-# Inicializa o extrator (só precisa ser feito 1 vez)
+# Inicializa o extrator 
 extractor = featureextractor.RadiomicsFeatureExtractor()
 extractor.disableAllFeatures()
-extractor.enableFeatureClassByName('glcm')  # ativa apenas GLCM
-extractor.enableImageTypeByName('Original')  # usa a imagem original
+extractor.enableFeatureClassByName('glcm')  
+extractor.enableImageTypeByName('Original')  
 
 def extract_glcm_features(volume, patient_id, series_uid, series_desc, has_contrast):
     """
@@ -139,32 +139,30 @@ def extract_glcm_features(volume, patient_id, series_uid, series_desc, has_contr
     import SimpleITK as sitk
     import numpy as np
 
-    # 1) Garantir que temos um SimpleITK.Image
+    # Garantir que temos um SimpleITK.Image
     if isinstance(volume, sitk.Image):
         sitk_image = volume
     else:
-        # Se for numpy, assumir que está em (slices, rows, cols) ou (rows, cols, slices)
         arr = np.asarray(volume)
         if arr.ndim != 3:
             raise ValueError(f"Volume numpy deve ser 3D, shape atual: {arr.shape}")
-        # Heurística simples: se a primeira dimensão não é igual ao número de cortes, transpor
+
         if arr.shape[0] != arr.shape[-1]:
             arr = np.transpose(arr, (2, 0, 1))
         sitk_image = sitk.GetImageFromArray(arr)
 
-    # 2) Criar máscara preenchida com 1 com mesma geometria (size, spacing, origin, direction)
     mask = sitk.Image(sitk_image.GetSize(), sitk.sitkUInt8)
     mask = mask + 1  # todos os voxels = 1
-    mask.CopyInformation(sitk_image)  # alinhamento espacial
+    mask.CopyInformation(sitk_image) 
 
-    # 3) Extrair features
+    # Extrair features
     try:
         result = extractor.execute(sitk_image, mask)
     except Exception as e:
-        print(f"   ❌ Erro na extração pyradiomics para {series_uid}: {e}", flush=True)
+        print(f"     Erro na extração pyradiomics para {series_uid}: {e}", flush=True)
         return None
 
-    # 4) Filtrar somente as features GLCM
+    # Filtrar somente as features GLCM
     glcm_feats = {}
     for k, v in result.items():
         if 'glcm' in k.lower():
@@ -173,7 +171,7 @@ def extract_glcm_features(volume, patient_id, series_uid, series_desc, has_contr
             except:
                 pass
 
-    # 5) Adicionar metadados
+    # Adicionar metadados
     glcm_feats.update({
         "PatientID": patient_id,
         "SeriesUID": series_uid,
@@ -220,12 +218,11 @@ for patient_id, studies in tqdm(all_data.items(), desc="Pacientes"):
             total_sem_contraste += 1
         else:
             print(f"  Estudo {study_uid} não está nas planilhas — ignorado", flush=True)
-            continue  # ignora se UID do estudo não está na planilha
+            continue  
 
         total_exames += 1
         print(f"  Processando estudo UID: {study_uid}, Contraste: {has_contrast}", flush=True)
 
-        # Seleciona a melhor série
         best_series = select_best_series(study["Series"])
         if not best_series:
             sem_serie_valida += 1
@@ -237,7 +234,6 @@ for patient_id, studies in tqdm(all_data.items(), desc="Pacientes"):
               f"({best_series['Number of Slices']} cortes, {best_series['Rows']}x{best_series['Columns']})",
               flush=True)
 
-        # Carrega volume
         volume = loadSeries(best_series["Folder Path"])
         if volume is None:
             print(f"   !-Falha ao carregar série {best_series['Series Instance UID']}", flush=True)
@@ -254,7 +250,7 @@ for patient_id, studies in tqdm(all_data.items(), desc="Pacientes"):
 
         resultados.append(feats)
 
-# SALVA RESULTADOS
+# Salva resultados
 df_out = pd.DataFrame(resultados)
 df_out = df_out.round(3)
 df_out.to_csv(features_path, index=False, sep=";", decimal=",")
